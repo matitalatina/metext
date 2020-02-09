@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,18 +49,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<VisionText> extractText(ImageSource source) async {
-    var image = await ImagePicker.pickImage(source: source);
+  Future<VisionText> extractText(File image) async {
     final recognizer = FirebaseVision.instance.textRecognizer();
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(image);
     return await recognizer.processImage(visionImage);
   }
 
   showTextFromImage(BuildContext context, ImageSource source) async {
-    final visionText = await extractText(source);
+    final image = await ImagePicker.pickImage(source: source);
+    final visionText = await extractText(image);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ShowTextPage(visionText: visionText))
+      MaterialPageRoute(builder: (context) => ShowTextPage(visionText: visionText, image: image))
     );
   }
 
@@ -79,36 +81,37 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            OutlineButton(
-              onPressed: () async {
-                showTextFromImage(context, ImageSource.camera);
-              },
-              child: Text("From camera"),
-            ),
-            OutlineButton(
-              onPressed: () async {
-                showTextFromImage(context, ImageSource.gallery);
-              },
-              child: Text("From gallery"),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: OutlineButton.icon(
+                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                  onPressed: () async {
+                    showTextFromImage(context, ImageSource.camera);
+                  },
+                  icon: Icon(Icons.camera_alt),
+                  label: Text("From camera"),
+
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: OutlineButton.icon(
+                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                  onPressed: () async {
+                    showTextFromImage(context, ImageSource.gallery);
+                  },
+                  icon: Icon(Icons.photo_library),
+                  label: Text("From gallery"),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

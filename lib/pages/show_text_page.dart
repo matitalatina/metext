@@ -20,26 +20,14 @@ class ShowTextPage extends StatelessWidget {
       body: SafeArea(
         child: ListView.builder(
           itemCount: this.visionText.blocks.length,
-          itemBuilder: (context, index) => Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(
-                    child: SelectableText(this.visionText.blocks[index].text),
-                    fit: FlexFit.loose,
-                  ),
-                    IconButton(icon: Icon(Icons.content_copy), onPressed: () {
-                      Clipboard.setData(new ClipboardData(text: this.visionText.blocks[index].text));
-                      Scaffold.of(context).showSnackBar(
-                          SnackBar(content: Text("Copied!"), duration: Duration(seconds: 1),)
-                      );
-                    },),
-                ],
-              ),
-            ),
+          itemBuilder: (context, index) => ListTile(
+            title: SelectableText(this.visionText.blocks[index].text),
+            trailing: IconButton(icon: Icon(Icons.content_copy), onPressed: () {
+              Clipboard.setData(new ClipboardData(text: this.visionText.blocks[index].text));
+              Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text("Copied!"), duration: Duration(seconds: 1),)
+              );
+            },),
           ),
         ),
       ),

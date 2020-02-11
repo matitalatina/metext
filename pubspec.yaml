@@ -27,6 +27,7 @@ dependencies:
   provider: ^4.0.3
   image_picker: ^0.6.3+1
   firebase_ml_vision: ^0.9.3+5
+  share: ^0.6.3+5
 
 dev_dependencies:
   flutter_test:

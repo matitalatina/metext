@@ -79,7 +79,10 @@ class _SelectTextPageState extends State<SelectTextPage> {
                 tooltip: "Copy selected blocks",
                 onPressed: () async {
                   final text =
-                      this.extractedTexts.map((t) => t.text).join("\n");
+                      this.extractedTexts
+                          .where((t) => t.selected)
+                          .map((t) => t.text)
+                          .join("\n");
                   await Navigator.push(
                       context,
                       MaterialPageRoute(

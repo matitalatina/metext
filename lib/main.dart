@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:metext/pages/show_text_page.dart';
+import 'package:metext/widgets/choose_source.dart';
+import 'package:metext/pages/select_text_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,16 +15,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Metext',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.deepOrange,
+      ),
+      darkTheme: ThemeData(
+        primarySwatch: Colors.deepOrange,
+        accentColor: Colors.lightGreenAccent,
+        brightness: Brightness.dark,
       ),
       home: MyHomePage(title: 'Metext'),
     );
@@ -49,6 +46,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isLoading = false;
+
   Future<VisionText> extractText(File image) async {
     final recognizer = FirebaseVision.instance.textRecognizer();
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(image);
@@ -57,11 +56,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   showTextFromImage(BuildContext context, ImageSource source) async {
     final image = await ImagePicker.pickImage(source: source);
+    setLoading(true);
+    if (image == null) {
+      setLoading(false);
+      return;
+    }
     final visionText = await extractText(image);
-    Navigator.push(
+    await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ShowTextPage(visionText: visionText, image: image))
+      MaterialPageRoute(builder: (context) => SelectTextPage(visionText: visionText, image: image))
     );
+    setLoading(false);
+  }
+
+  void setLoading(bool loading) {
+    setState(() {
+      isLoading = loading;
+    });
   }
 
   @override
@@ -78,42 +89,16 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: OutlineButton.icon(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-                  onPressed: () async {
-                    showTextFromImage(context, ImageSource.camera);
-                  },
-                  icon: Icon(Icons.camera_alt),
-                  label: Text("From camera"),
-
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: OutlineButton.icon(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-                  onPressed: () async {
-                    showTextFromImage(context, ImageSource.gallery);
-                  },
-                  icon: Icon(Icons.photo_library),
-                  label: Text("From gallery"),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      body: isLoading ?
+      Center(child: CircularProgressIndicator()) :
+      ChooseSource(
+        onCameraTap:  () async {
+          showTextFromImage(context, ImageSource.camera);
+        },
+        onLibraryTap: () async {
+          showTextFromImage(context, ImageSource.gallery);
+        },
+      )
     );
   }
 }

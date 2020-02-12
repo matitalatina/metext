@@ -1,12 +1,20 @@
 import 'dart:io';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:metext/locator.dart';
+import 'package:metext/service/ad_mob.dart';
 import 'package:metext/widgets/choose_source.dart';
 import 'package:metext/pages/select_text_page.dart';
 
-void main() => runApp(MyApp());
+
+void main() {
+  initializeServiceLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -47,7 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
-
+  InterstitialAd _adIntertitial = null;
   Future<VisionText> extractText(File image) async {
     final recognizer = FirebaseVision.instance.textRecognizer();
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(image);
@@ -55,7 +63,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   showTextFromImage(BuildContext context, ImageSource source) async {
-    final image = await ImagePicker.pickImage(source: source);
+    var image;
+    try {
+      image = await ImagePicker.pickImage(source: source);
+    } on PlatformException catch (e) {
+      if (e.code == "photo_access_denied") {
+        showDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (context) => AlertDialog(
+                  title: Text("Need permission"),
+                  content: Text(
+                      "I can't access to your library, please allow me to do that."),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Ok"),
+                      onPressed: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      },
+                    )
+                  ],
+                ));
+      }
+    }
     setLoading(true);
     if (image == null) {
       setLoading(false);
@@ -63,10 +93,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     final visionText = await extractText(image);
     await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SelectTextPage(visionText: visionText, image: image))
-    );
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                SelectTextPage(visionText: visionText, image: image)));
     setLoading(false);
+    final ads = getIt<AdService>();
+    if (_adIntertitial == null) {
+      _adIntertitial = ads.loadInterstitial();
+    }
+    _adIntertitial.show(
+      anchorType: AnchorType.bottom,
+      anchorOffset: 0.0,
+    );
   }
 
   void setLoading(bool loading) {
@@ -84,22 +123,30 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: isLoading ?
-      Center(child: CircularProgressIndicator()) :
-      ChooseSource(
-        onCameraTap:  () async {
-          showTextFromImage(context, ImageSource.camera);
-        },
-        onLibraryTap: () async {
-          showTextFromImage(context, ImageSource.gallery);
-        },
-      )
-    );
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+        ),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : ChooseSource(
+                onCameraTap: () async {
+                  showTextFromImage(context, ImageSource.camera);
+                },
+                onLibraryTap: () async {
+                  showTextFromImage(context, ImageSource.gallery);
+                },
+              ));
   }
-}
 
+  @override
+  void dispose() {
+    if (_adIntertitial != null) {
+      _adIntertitial.dispose();
+    }
+    _adIntertitial = null;
+    super.dispose();
+  }
+
+}

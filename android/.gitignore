@@ -6,4 +6,8 @@ gradle-wrapper.jar
 /local.properties
 GeneratedPluginRegistrant.java
 
+/secrets/*
+!/secrets/secrets.tar.enc
+app/src/main/res/values/secrets.xml
+
 app/google-services.json

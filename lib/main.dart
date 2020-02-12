@@ -1,13 +1,20 @@
 import 'dart:io';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:metext/locator.dart';
+import 'package:metext/service/ad_mob.dart';
 import 'package:metext/widgets/choose_source.dart';
 import 'package:metext/pages/select_text_page.dart';
 
-void main() => runApp(MyApp());
+
+void main() {
+  initializeServiceLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -48,7 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
-
+  InterstitialAd _adIntertitial = null;
   Future<VisionText> extractText(File image) async {
     final recognizer = FirebaseVision.instance.textRecognizer();
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(image);
@@ -91,6 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (context) =>
                 SelectTextPage(visionText: visionText, image: image)));
     setLoading(false);
+    final ads = getIt<AdService>();
+    if (_adIntertitial == null) {
+      _adIntertitial = ads.loadInterstitial();
+    }
+    _adIntertitial.show(
+      anchorType: AnchorType.bottom,
+      anchorOffset: 0.0,
+    );
   }
 
   void setLoading(bool loading) {
@@ -124,4 +139,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ));
   }
+
+  @override
+  void dispose() {
+    if (_adIntertitial != null) {
+      _adIntertitial.dispose();
+    }
+    _adIntertitial = null;
+    super.dispose();
+  }
+
 }

@@ -29,36 +29,35 @@ class _ShowTextPageState extends State<ShowTextPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Share"),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.share),
+        appBar: AppBar(
+          title: Text("Edit & Share"),
+          actions: [
+            Builder(builder: (context) => IconButton(
+              icon: Icon(Icons.content_copy),
+              tooltip: "Copy selected blocks",
               onPressed: () {
-                Share.share(textController.text,
-                    subject: "Extracted text using Metext");
-              })
-        ],
-      ),
-      body: SafeArea(
-          child: TextField(
-        controller: textController,
-        expands: true,
-        maxLines: null,
-      )),
-      floatingActionButton: Builder(
-        builder: (BuildContext context) => FloatingActionButton(
-          child: Icon(Icons.content_copy),
-          tooltip: "Copy selected blocks",
-          onPressed: () {
-            Clipboard.setData(new ClipboardData(text: "ciao"));
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text("Copied!"),
-              duration: Duration(seconds: 1),
-            ));
-          },
+                Clipboard.setData(new ClipboardData(text: "ciao"));
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text("Copied!"),
+                  duration: Duration(seconds: 1),
+                ));
+              },
+            ))
+          ],
         ),
-      ),
-    );
+        body: SafeArea(
+            child: TextField(
+          controller: textController,
+          expands: true,
+          maxLines: null,
+              autofocus: true,
+        )),
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.share),
+            tooltip: "Share",
+            onPressed: () {
+              Share.share(textController.text,
+                  subject: "Extracted text using Metext");
+            }));
   }
 }

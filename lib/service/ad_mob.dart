@@ -8,9 +8,8 @@ class AdService {
         .initialize(appId: await Secrets.getAdmobAppId());
   }
 
-  InterstitialAd loadInterstitial() {
-    return _loadInterstitialAd()
-      ..load();
+  InterstitialAd getInterstitial() {
+    return _loadInterstitialAd();
   }
 
   final MobileAdTargetingInfo _targetingInfo = MobileAdTargetingInfo(

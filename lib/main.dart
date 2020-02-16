@@ -63,6 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   showTextFromImage(BuildContext context, ImageSource source) async {
+    final ads = getIt<AdService>();
+    if (_adIntertitial == null) {
+      _adIntertitial = ads.getInterstitial()..load();
+    }
     var image;
     try {
       image = await ImagePicker.pickImage(source: source);
@@ -98,10 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (context) =>
                 SelectTextPage(visionText: visionText, image: image)));
     setLoading(false);
-    final ads = getIt<AdService>();
-    if (_adIntertitial == null) {
-      _adIntertitial = ads.loadInterstitial();
-    }
     _adIntertitial.show(
       anchorType: AnchorType.bottom,
       anchorOffset: 0.0,

@@ -7,9 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:metext/locator.dart';
 import 'package:metext/service/ad_mob.dart';
+import 'package:metext/widgets/app_icon.dart';
 import 'package:metext/widgets/choose_source.dart';
 import 'package:metext/pages/select_text_page.dart';
-
 
 void main() {
   initializeServiceLocator();
@@ -56,6 +56,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   InterstitialAd _adIntertitial = null;
+
   Future<VisionText> extractText(File image) async {
     final recognizer = FirebaseVision.instance.textRecognizer();
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(image);
@@ -130,13 +131,22 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: isLoading
             ? Center(child: CircularProgressIndicator())
-            : ChooseSource(
-                onCameraTap: () async {
-                  showTextFromImage(context, ImageSource.camera);
-                },
-                onLibraryTap: () async {
-                  showTextFromImage(context, ImageSource.gallery);
-                },
+            : Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    child: AppIcon(),
+                  ),
+                  ChooseSource(
+                    onCameraTap: () async {
+                      showTextFromImage(context, ImageSource.camera);
+                    },
+                    onLibraryTap: () async {
+                      showTextFromImage(context, ImageSource.gallery);
+                    },
+                  ),
+                ],
               ));
   }
 
@@ -148,5 +158,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _adIntertitial = null;
     super.dispose();
   }
-
 }
+
+

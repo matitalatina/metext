@@ -56,6 +56,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   InterstitialAd _adIntertitial = null;
+  BuildContext currentContext;
 
   Future<VisionText> extractText(File image) async {
     final recognizer = FirebaseVision.instance.textRecognizer();
@@ -63,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return await recognizer.processImage(visionImage);
   }
 
-  showTextFromImage(BuildContext context, ImageSource source) async {
+  showTextFromImage(ImageSource source) async {
     final ads = getIt<AdService>();
     if (_adIntertitial == null) {
       _adIntertitial = ads.getInterstitial()..load();
@@ -74,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } on PlatformException catch (e) {
       if (e.code == "photo_access_denied") {
         showDialog(
-            context: context,
+            context: currentContext,
             barrierDismissible: true,
             builder: (context) => AlertDialog(
                   title: Text("Need permission"),
@@ -98,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     final visionText = await extractText(image);
     await Navigator.push(
-        context,
+        currentContext,
         MaterialPageRoute(
             builder: (context) =>
                 SelectTextPage(visionText: visionText, image: image)));
@@ -117,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    currentContext = context;
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -131,22 +133,30 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: isLoading
             ? Center(child: CircularProgressIndicator())
-            : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 32),
-                    child: AppIcon(),
+            : OrientationBuilder(
+                builder: (context, orientation) => Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        orientation == Orientation.portrait
+                            ? Padding(
+                                padding: const EdgeInsets.only(bottom: 32),
+                                child: AppIcon(),
+                              )
+                            : null,
+                        ChooseSource(
+                          onCameraTap: () async {
+                            showTextFromImage(ImageSource.camera);
+                          },
+                          onLibraryTap: () async {
+                            showTextFromImage(ImageSource.gallery);
+                          },
+                        ),
+                      ].where((w) => w != null).toList(),
+                    ),
                   ),
-                  ChooseSource(
-                    onCameraTap: () async {
-                      showTextFromImage(context, ImageSource.camera);
-                    },
-                    onLibraryTap: () async {
-                      showTextFromImage(context, ImageSource.gallery);
-                    },
-                  ),
-                ],
+                ),
               ));
   }
 
@@ -159,5 +169,3 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 }
-
-

@@ -4,6 +4,8 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:metext/i18n/l10n.dart';
 import 'package:metext/pages/edit_text_page.dart';
+import 'package:metext/widgets/background_color.dart';
+import 'package:metext/widgets/gradient_bar.dart';
 
 class SelectTextPage extends StatefulWidget {
   SelectTextPage({Key key, @required this.visionText, @required this.image})
@@ -35,6 +37,7 @@ class _SelectTextPageState extends State<SelectTextPage> {
       appBar: AppBar(
         title: Text(
             "$selectedCount ${selectedCount == 1 ? l10n.selectPageSelectedBlock : l10n.selectPageSelectedBlocks}"),
+        flexibleSpace: GradientBar(),
         actions: [
           hasMoreSelected
               ? IconButton(
@@ -49,6 +52,7 @@ class _SelectTextPageState extends State<SelectTextPage> {
                 )
         ],
       ),
+      backgroundColor: getBackgroundColor(context),
       body: SafeArea(
           child: ReorderableListView(
               onReorder: (oldIndex, newIndex) {

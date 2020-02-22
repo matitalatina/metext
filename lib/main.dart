@@ -11,9 +11,11 @@ import 'package:metext/i18n/l10n_delegate.dart';
 import 'package:metext/locator.dart';
 import 'package:metext/service/ad_mob.dart';
 import 'package:metext/widgets/app_icon.dart';
+import 'package:metext/widgets/background_color.dart';
 import 'package:metext/widgets/choose_source.dart';
 import 'package:metext/pages/select_text_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:metext/widgets/gradient_bar.dart';
 
 void main() {
   initializeServiceLocator();
@@ -82,9 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
   showTextFromImage(ImageSource source) async {
     final l10n = AppL10n.of(context);
     final ads = getIt<AdService>();
-    if (_adIntertitial == null) {
-      _adIntertitial = ads.getInterstitial()..load();
+    if (_adIntertitial != null) {
+      _adIntertitial.dispose();
     }
+    _adIntertitial = ads.getInterstitial()..load();
     var image;
     try {
       image = await ImagePicker.pickImage(source: source);
@@ -145,7 +148,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
+          flexibleSpace: GradientBar(),
         ),
+        backgroundColor: getBackgroundColor(context),
         body: isLoading
             ? Center(child: CircularProgressIndicator())
             : OrientationBuilder(

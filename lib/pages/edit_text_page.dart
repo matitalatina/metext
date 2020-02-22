@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:metext/i18n/l10n.dart';
+import 'package:metext/widgets/background_color.dart';
+import 'package:metext/widgets/gradient_bar.dart';
 import 'package:share/share.dart';
 
 class EditTextPage extends StatefulWidget {
@@ -33,26 +35,33 @@ class _EditTextPageState extends State<EditTextPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(l10n.editPageTitle),
+          flexibleSpace: GradientBar(),
           actions: [
-            Builder(builder: (context) => IconButton(
-              icon: Icon(Icons.content_copy),
-              tooltip: l10n.editPageCopy,
-              onPressed: () {
-                Clipboard.setData(new ClipboardData(text: textController.text));
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(l10n.editPageCopied),
-                  duration: Duration(seconds: 1),
-                ));
-              },
-            ))
+            Builder(
+                builder: (context) => IconButton(
+                      icon: Icon(Icons.content_copy),
+                      tooltip: l10n.editPageCopy,
+                      onPressed: () {
+                        Clipboard.setData(
+                            new ClipboardData(text: textController.text));
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text(l10n.editPageCopied),
+                          duration: Duration(seconds: 1),
+                        ));
+                      },
+                    ))
           ],
         ),
+        backgroundColor: getBackgroundColor(context),
         body: SafeArea(
-            child: TextField(
-          controller: textController,
-          expands: true,
-          maxLines: null,
-              autofocus: true,
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: TextField(
+            controller: textController,
+            expands: true,
+            maxLines: null,
+            autofocus: true,
+          ),
         )),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.share),

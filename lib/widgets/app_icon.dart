@@ -12,7 +12,7 @@ class AppIcon extends StatelessWidget {
       brightness == Brightness.dark ?
       "assets/icons/metext-logo-white.png" :
       "assets/icons/metext-logo-black.png",
-      height: 200,
+      height: 120,
     );
   }
 }

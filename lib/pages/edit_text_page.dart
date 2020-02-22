@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:metext/i18n/l10n.dart';
 import 'package:share/share.dart';
 
-class ShowTextPage extends StatefulWidget {
+class EditTextPage extends StatefulWidget {
   final String text;
 
-  ShowTextPage({Key key, @required this.text}) : super(key: key);
+  EditTextPage({Key key, @required this.text}) : super(key: key);
 
   @override
-  _ShowTextPageState createState() => _ShowTextPageState();
+  _EditTextPageState createState() => _EditTextPageState();
 }
 
-class _ShowTextPageState extends State<ShowTextPage> {
+class _EditTextPageState extends State<EditTextPage> {
   final textController = TextEditingController();
 
   @override
@@ -28,17 +29,18 @@ class _ShowTextPageState extends State<ShowTextPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text("Edit & Share"),
+          title: Text(l10n.editPageTitle),
           actions: [
             Builder(builder: (context) => IconButton(
               icon: Icon(Icons.content_copy),
-              tooltip: "Copy selected blocks",
+              tooltip: l10n.editPageCopy,
               onPressed: () {
-                Clipboard.setData(new ClipboardData(text: "ciao"));
+                Clipboard.setData(new ClipboardData(text: textController.text));
                 Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Copied!"),
+                  content: Text(l10n.editPageCopied),
                   duration: Duration(seconds: 1),
                 ));
               },
@@ -54,10 +56,10 @@ class _ShowTextPageState extends State<ShowTextPage> {
         )),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.share),
-            tooltip: "Share",
+            tooltip: l10n.editPageShare,
             onPressed: () {
               Share.share(textController.text,
-                  subject: "Extracted text using Metext");
+                  subject: l10n.editPageShareContentSubject);
             }));
   }
 }

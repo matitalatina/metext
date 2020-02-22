@@ -1,6 +1,6 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/foundation.dart';
-import 'package:metext/utils/Secrets.dart';
+import 'package:metext/utils/secrets.dart';
 
 class AdService {
   Future<bool> initialize() async {

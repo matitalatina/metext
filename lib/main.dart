@@ -5,11 +5,15 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:metext/i18n/constants.dart';
+import 'package:metext/i18n/l10n.dart';
+import 'package:metext/i18n/l10n_delegate.dart';
 import 'package:metext/locator.dart';
 import 'package:metext/service/ad_mob.dart';
 import 'package:metext/widgets/app_icon.dart';
 import 'package:metext/widgets/choose_source.dart';
 import 'package:metext/pages/select_text_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   initializeServiceLocator();
@@ -21,16 +25,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Metext',
+      title: appName,
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,
+        fontFamily: 'Montserrat',
       ),
       darkTheme: ThemeData(
         primarySwatch: Colors.deepOrange,
         accentColor: Colors.lightGreenAccent,
         brightness: Brightness.dark,
+        fontFamily: 'Montserrat',
       ),
-      home: MyHomePage(title: 'Metext'),
+      home: MyHomePage(title: appName),
+      localizationsDelegates: [
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', ''),
+        const Locale('it', ''),
+      ],
     );
   }
 }
@@ -65,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   showTextFromImage(ImageSource source) async {
+    final l10n = AppL10n.of(context);
     final ads = getIt<AdService>();
     if (_adIntertitial == null) {
       _adIntertitial = ads.getInterstitial()..load();
@@ -78,12 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
             context: currentContext,
             barrierDismissible: true,
             builder: (context) => AlertDialog(
-                  title: Text("Need permission"),
-                  content: Text(
-                      "I can't access to your library, please allow me to do that."),
+                  title: Text(l10n.permissionPhotoAccessDeniedTitle),
+                  content: Text(l10n.permissionPhotoAccessDeniedDescription),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text("Ok"),
+                      child: Text(l10n.ok),
                       onPressed: () {
                         Navigator.of(context, rootNavigator: true).pop();
                       },

@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
-import 'package:metext/pages/show_text_page.dart';
+import 'package:metext/i18n/l10n.dart';
+import 'package:metext/pages/edit_text_page.dart';
 
 class SelectTextPage extends StatefulWidget {
   SelectTextPage({Key key, @required this.visionText, @required this.image})
@@ -20,6 +21,7 @@ class _SelectTextPageState extends State<SelectTextPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     this.extractedTexts = this.extractedTexts ??
         this
             .widget
@@ -31,18 +33,19 @@ class _SelectTextPageState extends State<SelectTextPage> {
     final hasMoreSelected = selectedCount > this.extractedTexts.length / 2;
     return Scaffold(
       appBar: AppBar(
-        title: Text("$selectedCount selected blocks"),
+        title: Text(
+            "$selectedCount ${selectedCount == 1 ? l10n.selectPageSelectedBlock : l10n.selectPageSelectedBlocks}"),
         actions: [
           hasMoreSelected
               ? IconButton(
                   icon: Icon(Icons.check_box),
                   onPressed: () => onSelectAll(false),
-                  tooltip: "Unselect all",
+                  tooltip: l10n.selectPageDeselectAll,
                 )
               : IconButton(
                   icon: Icon(Icons.check_box_outline_blank),
                   onPressed: () => onSelectAll(true),
-                  tooltip: "Select all",
+                  tooltip: l10n.selectPageSelectAll,
                 )
         ],
       ),
@@ -75,17 +78,17 @@ class _SelectTextPageState extends State<SelectTextPage> {
           ? Builder(
               builder: (BuildContext context) => FloatingActionButton(
                 child: Icon(Icons.navigate_next),
-                tooltip: "Copy selected blocks",
+                tooltip: AppL10n.of(context).selectPageContinue,
                 onPressed: () async {
-                  final text =
-                      this.extractedTexts
-                          .where((t) => t.selected)
-                          .map((t) => t.text)
-                          .join("\n");
+                  final text = this
+                      .extractedTexts
+                      .where((t) => t.selected)
+                      .map((t) => t.text)
+                      .join("\n");
                   await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ShowTextPage(text: text)));
+                          builder: (context) => EditTextPage(text: text)));
                 },
               ),
             )

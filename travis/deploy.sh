@@ -3,7 +3,7 @@
 set -e
 
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    flutter build appbundle --target-platform android-arm,android-arm64;
+    flutter build appbundle;
     cd android;
     bundle install;
     bundle exec fastlane android deploy;

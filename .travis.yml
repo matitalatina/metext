@@ -33,8 +33,8 @@ install:
 before_script:
   - openssl aes-256-cbc -K $encrypted_60a23110e3d0_key -iv $encrypted_60a23110e3d0_iv -in assets/secrets.yml.enc -out assets/secrets.yml -d
 
-script:
-  - flutter test
+#script:
+#  - flutter test
 
 deploy:
   provider: script

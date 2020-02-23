@@ -1,0 +1,12 @@
+Estrarre del testo dalle immagini è un problema comune. Quest'app risolve il problema di copiare il testo manualmente... Lo fa per te!
+
+Le funzioni sono:
+
+- Estrae il testo dalle immagini prese dalla tua galleria.
+- Estrae il testo da un'immagine scattata dalla fotocamera.
+- Il nostro algoritmo di riconoscimento dei caratteri è molto preciso. Utilizza lo stato dell'arte per quanto riguarda gli algoritmi OCR (Riconoscimento Ottico dei Caratteri).
+- Puoi selezionare solo le parti che ti interessano.
+- Revisiona e modifica.
+- Condivisione o copia del testo recuperato!
+
+Questa app è Made in Italy 🇮🇹!

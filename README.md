@@ -1,16 +1,32 @@
-# metext
+# Metext
 
 OCR Scanner
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+For help getting started with Flutter, view our online
+[documentation](https://flutter.io/).
 
-A few resources to get you started if this is your first Flutter project:
+## How to add secrets
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Common
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+If you want to add a secret in common `assets/secrets.yml`:
+
+- Modify `assets/secrets.yml`.
+- `cd assets`
+- `travis encrypt-file secrets.yml`
+
+### Android
+
+If you want to add a secret in resources:
+
+- Add it in `android/resource-secrets.xml`
+- `cd android/secrets`
+- `rm secrets.tar secrets.tar.enc`
+- `tar cvf secrets.tar *`
+- `travis encrypt-file secrets.tar`
+
+If you want to check if it works locally:
+
+- `cp android/secrets/resource-secrets.xml android/app/src/main/res/values/secrets.xml`

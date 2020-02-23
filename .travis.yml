@@ -1,0 +1,62 @@
+env:
+  global:
+    - JAVA_HOME=/usr/lib/jvm/java-8-oracle
+
+matrix:
+  include:
+    - os: linux
+      sudo: false
+      language: android
+      dist: trusty
+      android:
+        components:
+          - tools
+          - build-tools-28.0.3
+          - android-28
+      licenses:
+        - 'android-sdk-license-.+'
+      before_cache:
+        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+      cache:
+        directories:
+          - $HOME/.gradle/caches/
+          - $HOME/.gradle/wrapper/
+          - $HOME/.android/build-cache
+
+install:
+  - export FLUTTER_PATH=$HOME/flutter/
+  - git clone https://github.com/flutter/flutter.git -b stable $FLUTTER_PATH
+  - export PATH=$FLUTTER_PATH/bin:$FLUTTER_PATH/bin/cache/dart-sdk/bin:$PATH
+  - flutter doctor
+
+before_script:
+  - openssl aes-256-cbc -K $encrypted_60a23110e3d0_key -iv $encrypted_60a23110e3d0_iv -in assets/secrets.yml.enc -out assets/secrets.yml -d
+
+script:
+  - flutter test
+
+deploy:
+  provider: script
+  script: bash ./travis/deploy.sh
+  skip_cleanup: true
+  on:
+    branch: master
+    tags: true
+
+
+before_deploy:
+  - export LANG=en_US.UTF-8
+  - touch $HOME/.android/repositories.cfg
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    yes | sdkmanager "platforms;android-28";
+    yes | sdkmanager "build-tools;28.0.3";
+    yes | sdkmanager "extras;android;m2repository";
+    yes | sdkmanager "extras;google;m2repository";
+    yes | sdkmanager "extras;google;google_play_services";
+    export ANDROID_SECRETS_PATH=android/secrets;
+    openssl aes-256-cbc -K $encrypted_a58729bc415f_key -iv $encrypted_a58729bc415f_iv -in $ANDROID_SECRETS_PATH/secrets.tar.enc -out $ANDROID_SECRETS_PATH/secrets.tar -d
+    tar xvf $ANDROID_SECRETS_PATH/secrets.tar -C $ANDROID_SECRETS_PATH/;
+    mv $ANDROID_SECRETS_PATH/resource-secrets.xml android/app/src/main/res/values/secrets.xml;
+    mv $ANDROID_SECRETS_PATH/google-services.json android/app/google-services.json;
+    fi

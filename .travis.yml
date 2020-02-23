@@ -52,7 +52,7 @@ before_deploy:
     yes | sdkmanager "extras;google;m2repository";
     yes | sdkmanager "extras;google;google_play_services";
     export ANDROID_SECRETS_PATH=android/secrets;
-    openssl aes-256-cbc -K $encrypted_a58729bc415f_key -iv $encrypted_a58729bc415f_iv -in $ANDROID_SECRETS_PATH/secrets.tar.enc -out $ANDROID_SECRETS_PATH/secrets.tar -d
+    openssl aes-256-cbc -K $encrypted_a58729bc415f_key -iv $encrypted_a58729bc415f_iv -in $ANDROID_SECRETS_PATH/secrets.tar.enc -out $ANDROID_SECRETS_PATH/secrets.tar -d;
     tar xvf $ANDROID_SECRETS_PATH/secrets.tar -C $ANDROID_SECRETS_PATH/;
     mv $ANDROID_SECRETS_PATH/resource-secrets.xml android/app/src/main/res/values/secrets.xml;
     mv $ANDROID_SECRETS_PATH/google-services.json android/app/google-services.json;

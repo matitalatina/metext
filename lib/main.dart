@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_admob/firebase_admob.dart';
@@ -16,6 +17,7 @@ import 'package:metext/widgets/choose_source.dart';
 import 'package:metext/pages/select_text_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:metext/widgets/gradient_bar.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 void main() {
   initializeServiceLocator();
@@ -74,6 +76,24 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   InterstitialAd _adIntertitial = null;
   BuildContext currentContext;
+  StreamSubscription _intentDataStreamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // For sharing images coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
+        .listen((List<SharedMediaFile> value) {
+      return processExternalImage(value);
+    }, onError: (err) {
+      print("getIntentDataStream error: $err");
+    });
+
+    // For sharing images coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
+      return processExternalImage(value);
+    });
+  }
 
   Future<VisionText> extractText(File image) async {
     final recognizer = FirebaseVision.instance.textRecognizer();
@@ -81,47 +101,74 @@ class _MyHomePageState extends State<MyHomePage> {
     return await recognizer.processImage(visionImage);
   }
 
-  showTextFromImage(ImageSource source) async {
-    final l10n = AppL10n.of(context);
-    final ads = getIt<AdService>();
-    if (_adIntertitial != null) {
-      _adIntertitial.dispose();
+  Future<VisionText> processExternalImage(List<SharedMediaFile> files) async {
+    if (files != null &&
+        files.length > 0 &&
+        files[0].type == SharedMediaType.IMAGE) {
+      await addAdAfterCall(() async {
+        setLoading(true);
+        final image = File(files[0].path);
+        final visionText = await extractText(image);
+        await goToSelectBlocks(visionText, image);
+        setLoading(false);
+      });
     }
-    _adIntertitial = ads.getInterstitial()..load();
-    var image;
-    try {
-      image = await ImagePicker.pickImage(source: source);
-    } on PlatformException catch (e) {
-      if (e.code == "photo_access_denied") {
-        showDialog(
-            context: currentContext,
-            barrierDismissible: true,
-            builder: (context) => AlertDialog(
-                  title: Text(l10n.permissionPhotoAccessDeniedTitle),
-                  content: Text(l10n.permissionPhotoAccessDeniedDescription),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(l10n.ok),
-                      onPressed: () {
-                        Navigator.of(context, rootNavigator: true).pop();
-                      },
-                    )
-                  ],
-                ));
+    return null;
+  }
+
+  processImageFromSource(ImageSource source) async {
+    addAdAfterCall(() async {
+      final l10n = AppL10n.of(context);
+      var image;
+      try {
+        image = await ImagePicker.pickImage(source: source);
+      } on PlatformException catch (e) {
+        if (e.code == "photo_access_denied") {
+          showDialog(
+              context: currentContext,
+              barrierDismissible: true,
+              builder: (context) => AlertDialog(
+                    title: Text(l10n.permissionPhotoAccessDeniedTitle),
+                    content: Text(l10n.permissionPhotoAccessDeniedDescription),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text(l10n.ok),
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        },
+                      )
+                    ],
+                  ));
+        }
       }
-    }
-    setLoading(true);
-    if (image == null) {
+      setLoading(true);
+      if (image == null) {
+        setLoading(false);
+        return;
+      }
+      final visionText = await extractText(image);
+      await goToSelectBlocks(visionText, image);
       setLoading(false);
-      return;
-    }
-    final visionText = await extractText(image);
+    });
+  }
+
+  Future goToSelectBlocks(VisionText visionText, File image) async {
     await Navigator.push(
         currentContext,
         MaterialPageRoute(
             builder: (context) =>
                 SelectTextPage(visionText: visionText, image: image)));
-    setLoading(false);
+  }
+
+  addAdAfterCall<T>(Future<T> Function() callback) async {
+    final ads = getIt<AdService>();
+    if (_adIntertitial != null) {
+      _adIntertitial.dispose();
+    }
+    _adIntertitial = ads.getInterstitial()..load();
+
+    await callback();
+
     _adIntertitial.show(
       anchorType: AnchorType.bottom,
       anchorOffset: 0.0,
@@ -137,16 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     currentContext = context;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
         appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
           flexibleSpace: GradientBar(),
         ),
@@ -167,10 +206,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             : null,
                         ChooseSource(
                           onCameraTap: () async {
-                            showTextFromImage(ImageSource.camera);
+                            processImageFromSource(ImageSource.camera);
                           },
                           onLibraryTap: () async {
-                            showTextFromImage(ImageSource.gallery);
+                            processImageFromSource(ImageSource.gallery);
                           },
                         ),
                       ].where((w) => w != null).toList(),
@@ -186,6 +225,9 @@ class _MyHomePageState extends State<MyHomePage> {
       _adIntertitial.dispose();
     }
     _adIntertitial = null;
+    if (_intentDataStreamSubscription != null) {
+      _intentDataStreamSubscription.cancel();
+    }
     super.dispose();
   }
 }

@@ -34,7 +34,7 @@ class _EditTextPageState extends State<EditTextPage> {
     final l10n = AppL10n.of(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(l10n.editPageTitle),
+          title: Text(l10n.editPageTitle, key: Key('editPage-title'),),
           flexibleSpace: GradientBar(),
           actions: [
             Builder(

@@ -36,6 +36,7 @@ class ChooseSource extends StatelessWidget {
                 onPressed: this.onLibraryTap,
                 icon: Icon(Icons.photo_library),
                 label: Text(l10n.sourceFromGallery),
+                key: Key('chooseSource-byLibrary-btn'),
               ),
             ),
           ],

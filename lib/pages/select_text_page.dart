@@ -36,7 +36,9 @@ class _SelectTextPageState extends State<SelectTextPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            "$selectedCount ${selectedCount == 1 ? l10n.selectPageSelectedBlock : l10n.selectPageSelectedBlocks}"),
+            "$selectedCount ${selectedCount == 1 ? l10n.selectPageSelectedBlock : l10n.selectPageSelectedBlocks}",
+            key: Key('selectPage-title')
+      ),
         flexibleSpace: GradientBar(),
         actions: [
           hasMoreSelected
@@ -66,9 +68,11 @@ class _SelectTextPageState extends State<SelectTextPage> {
                   }
                 });
               },
-              children: this.extractedTexts.map((t) {
+              children: this.extractedTexts.asMap().entries.map((entry) {
+                final index = entry.key;
+                final t = entry.value;
                 return ListTile(
-                  key: Key(t.text),
+                  key: Key('selectPage-listTile-$index'),
                   onTap: () => onToggleText(t),
                   title: Text(t.text),
                   leading: Icon(t.selected
@@ -81,6 +85,7 @@ class _SelectTextPageState extends State<SelectTextPage> {
       floatingActionButton: selectedCount != 0
           ? Builder(
               builder: (BuildContext context) => FloatingActionButton(
+                key: Key('selectPage-continueBtn'),
                 child: Icon(Icons.navigate_next),
                 tooltip: AppL10n.of(context).selectPageContinue,
                 onPressed: () async {

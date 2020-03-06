@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,6 +52,9 @@ class MyApp extends StatelessWidget {
         const Locale('en', ''),
         const Locale('it', ''),
       ],
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
+      ],
     );
   }
 }
@@ -65,7 +70,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
-  InterstitialAd _adIntertitial = null;
+  InterstitialAd _adIntertitial;
   BuildContext currentContext;
   StreamSubscription _intentDataStreamSubscription;
 

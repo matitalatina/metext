@@ -14,10 +14,8 @@ locales:
 # A list of devices to run tests on
 devices:
   android:
-    Pixel 2 API 28:
-      orientation:
-        - LandscapeRight
-        - Portrait
+    Nexus 6P:
+      orientation: Portrait
 
 # Frame screenshots
 frame: true

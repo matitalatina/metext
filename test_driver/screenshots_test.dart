@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 import 'dart:convert' as c;
@@ -12,15 +14,20 @@ void main() {
     final selectPageContinueBtn = find.byValueKey("selectPage-continueBtn");
     final selectListItemFirst = find.byValueKey("selectPage-listTile-0");
     final selectListItemSecond = find.byValueKey("selectPage-listTile-1");
+    bool isDarkMode;
 
     FlutterDriver driver;
     setUpAll(() async {
+      String response = (await Process.run('adb', ['shell', 'settings', 'get', 'secure', 'ui_night_mode'])).stdout;
+      isDarkMode = int.parse(response.replaceAll('\n', '')) == 2;
+
       driver = await FlutterDriver.connect();
       localizations = c.jsonDecode(await driver.requestData(null));
+
     });
 
     test('loads sample text', () async {
-      await screenshot(driver, config, '1');
+      await screenshot(driver, config, getScreenshotId(1, isDarkMode));
       await driver.tap(chooseByLibraryBtn);
     });
 
@@ -29,9 +36,9 @@ void main() {
       await driver.tap(selectListItemFirst);
       await driver.tap(selectListItemSecond);
       expect(await driver.getText(selectPageTitle), contains('2'));
-      await screenshot(driver, config, '2');
+      await screenshot(driver, config, getScreenshotId(2, isDarkMode));
       await driver.tap(selectPageContinueBtn);
-      await screenshot(driver, config, '2');
+      await screenshot(driver, config, getScreenshotId(3, isDarkMode));
     });
 
     tearDownAll(() async {
@@ -40,4 +47,8 @@ void main() {
       }
     });
   });
+}
+
+String getScreenshotId(int index, bool isDarkMode) {
+  return (index + (isDarkMode ? 0 : 3)).toString();
 }

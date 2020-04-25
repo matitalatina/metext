@@ -30,3 +30,8 @@ If you want to add a secret in resources:
 If you want to check if it works locally:
 
 - `cp android/secrets/resource-secrets.xml android/app/src/main/res/values/secrets.xml`
+
+### iOS
+
+- TODO: If someone refuse photo permission he is gone.
+- TODO: add google service file and xconfig file for CI/CD iOS.

@@ -30,3 +30,10 @@ Runner/GeneratedPluginRegistrant.*
 !default.mode2v3
 !default.pbxuser
 !default.perspectivev3
+
+/GoogleService-Info.plist
+/Flutter/Debug.xcconfig
+/Flutter/Release.xcconfig
+
+/secrets/*
+!/secrets/secrets.tar.enc

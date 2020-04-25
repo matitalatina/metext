@@ -154,7 +154,7 @@ PODS:
   - Protobuf (3.11.4)
   - receive_sharing_intent (0.0.1):
     - Flutter
-  - share (0.5.2):
+  - share (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -239,7 +239,7 @@ SPEC CHECKSUMS:
   FirebaseMLVision: 7a456009787690e3b53436092ae9b635563de8f3
   FirebaseMLVisionTextModel: c264caa3100ca804580bf2a7c1cb9ff390d1f471
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_plugin_android_lifecycle: 47de533a02850f070f5696a623995e93eddcdb9b
+  flutter_plugin_android_lifecycle: dc0b544e129eebb77a6bfb1239d4d1c673a60a35
   Google-Mobile-Ads-SDK: 7052557293c75c676db55feb707ace9b790f32c1
   GoogleAPIClientForREST: 0f19a8280dfe6471f76016645d26eb5dae305101
   GoogleAppMeasurement: 2253e99c1f22638cf234c059144660c338ad76c3
@@ -250,12 +250,12 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   image_picker: 66aa71bc96850a90590a35d4c4a2907b0d823109
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
   receive_sharing_intent: c0d87310754e74c0f9542947e7cbdf3a0335a3b1
-  share: bae0a282aab4483288913fc4dc0b935d4b491f2e
+  share: 0b2c3e82132f5888bccca3351c504d0003b3b410
 
 PODFILE CHECKSUM: b961e6d442e84e4c580c899794aa45bbba318880
 

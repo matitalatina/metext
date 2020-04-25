@@ -2,6 +2,7 @@ const appEnValues = {
   'en': {
     'Permission.PhotoAccessDenied.Title': 'Need permission',
     'Permission.PhotoAccessDenied.Description': "I can't access to your library, please allow me to do that.",
+    'Permission.CameraAccessDenied.Description': "I can't access to your camera, please allow me to do that.",
     'Ok': 'Ok',
     'Source.FromCamera': 'Camera',
     'Source.FromGallery': 'Gallery',

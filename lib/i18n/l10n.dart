@@ -28,6 +28,12 @@ class AppL10n {
         ['Permission.PhotoAccessDenied.Description'];
   }
 
+
+  String get permissionCameraAccessDeniedDescription {
+    return _localizedValues[locale.languageCode]
+    ['Permission.CameraAccessDenied.Description'];
+  }
+
   String get ok {
     return _localizedValues[locale.languageCode]['Ok'];
   }

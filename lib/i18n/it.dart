@@ -2,6 +2,7 @@ const appItValues =  {
   'it': {
     'Permission.PhotoAccessDenied.Title': 'Permesso necessario',
     'Permission.PhotoAccessDenied.Description': "Non riesco ad accedere alla libreria. Permettimi di farlo, per favore.",
+    'Permission.CameraAccessDenied.Description': "Non riesco ad accedere alla fotocamera. Permettimi di farlo, per favore.",
     'Ok': 'Ok',
     'Source.FromCamera': 'Fotocamera',
     'Source.FromGallery': 'Galleria',

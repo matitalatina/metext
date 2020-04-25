@@ -113,35 +113,38 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   processImageFromSource(ImageSource source) async {
+    final l10n = AppL10n.of(context);
+    var image;
+    try {
+      image = await ImagePicker.pickImage(source: source);
+    } on PlatformException catch (e) {
+      if (e.code == "photo_access_denied" || e.code == "camera_access_denied") {
+        showDialog(
+            context: currentContext,
+            barrierDismissible: true,
+            builder: (context) => AlertDialog(
+                  backgroundColor: getBackgroundColor(context),
+                  title: Text(l10n.permissionPhotoAccessDeniedTitle),
+                  content: Text(e.code == "photo_access_denied"
+                      ? l10n.permissionPhotoAccessDeniedDescription
+                      : l10n.permissionCameraAccessDeniedDescription),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(l10n.ok),
+                      onPressed: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      },
+                    )
+                  ],
+                ));
+      }
+    }
+    setLoading(true);
+    if (image == null) {
+      setLoading(false);
+      return;
+    }
     addAdAfterCall(() async {
-      final l10n = AppL10n.of(context);
-      var image;
-      try {
-        image = await ImagePicker.pickImage(source: source);
-      } on PlatformException catch (e) {
-        if (e.code == "photo_access_denied") {
-          showDialog(
-              context: currentContext,
-              barrierDismissible: true,
-              builder: (context) => AlertDialog(
-                    title: Text(l10n.permissionPhotoAccessDeniedTitle),
-                    content: Text(l10n.permissionPhotoAccessDeniedDescription),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text(l10n.ok),
-                        onPressed: () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                        },
-                      )
-                    ],
-                  ));
-        }
-      }
-      setLoading(true);
-      if (image == null) {
-        setLoading(false);
-        return;
-      }
       final visionText = await extractText(image);
       await goToSelectBlocks(visionText, image);
       setLoading(false);

@@ -25,7 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   get_it: ^3.1.0
   provider: ^4.0.3
-  image_picker: ^0.6.3+1
+  image_picker: ^0.6.5+2
   firebase_ml_vision: ^0.9.3+8
   share: ^0.6.3+5
   firebase_admob: ^0.9.3+2

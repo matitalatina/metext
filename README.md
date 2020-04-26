@@ -33,5 +33,5 @@ If you want to check if it works locally:
 
 ### iOS
 
-- TODO: If someone refuse photo permission he is gone.
 - TODO: add google service file and xconfig file for CI/CD iOS.
+- TODO: add ios/fastlane/metadata/review_information

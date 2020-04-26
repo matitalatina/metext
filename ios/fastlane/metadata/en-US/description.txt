@@ -1,0 +1,10 @@
+Extracting text from images is a common problem. This app solves the pain to copy text manually... It does it for you!
+
+The main features are:
+
+- Extract text from image taken from your gallery.
+- Extract text from the camera.
+- Our OCR algorithm is very precise. We take from the state-of-the-art Optical Character Recognition software.
+- You can select only the interesting parts from the extracted text.
+- Edit, review the extracted text.
+- Share or copy the text.

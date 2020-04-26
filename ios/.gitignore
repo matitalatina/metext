@@ -35,5 +35,11 @@ Runner/GeneratedPluginRegistrant.*
 /Flutter/Debug.xcconfig
 /Flutter/Release.xcconfig
 
+/Runner.ipa
+/Runner.app.dSYM.zip
+
 /secrets/*
 !/secrets/secrets.tar.enc
+/fastlane/metadata/review_information
+/fastlane/Appfile
+/fastlane/Matchfile

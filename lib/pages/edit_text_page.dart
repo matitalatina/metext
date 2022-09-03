@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:metext/i18n/l10n.dart';
 import 'package:metext/widgets/background_color.dart';
 import 'package:metext/widgets/gradient_bar.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class EditTextPage extends StatefulWidget {
   final String text;
 
-  EditTextPage({Key key, @required this.text}) : super(key: key);
+  EditTextPage({Key? key, required this.text}) : super(key: key);
 
   @override
   _EditTextPageState createState() => _EditTextPageState();
@@ -44,7 +44,7 @@ class _EditTextPageState extends State<EditTextPage> {
                       onPressed: () {
                         Clipboard.setData(
                             new ClipboardData(text: textController.text));
-                        Scaffold.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(l10n.editPageCopied),
                           duration: Duration(seconds: 1),
                         ));

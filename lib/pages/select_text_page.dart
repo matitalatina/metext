@@ -1,30 +1,30 @@
 import 'dart:io';
 
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:metext/i18n/l10n.dart';
 import 'package:metext/pages/edit_text_page.dart';
 import 'package:metext/widgets/background_color.dart';
 import 'package:metext/widgets/gradient_bar.dart';
 
 class SelectTextPage extends StatefulWidget {
-  SelectTextPage({Key key, @required this.visionText, @required this.image})
+  SelectTextPage({Key? key, required this.visionText, required this.image})
       : super(key: key);
 
   final File image;
-  final VisionText visionText;
+  final RecognizedText visionText;
 
   @override
   _SelectTextPageState createState() => _SelectTextPageState();
 }
 
 class _SelectTextPageState extends State<SelectTextPage> {
-  List<ExtractedText> extractedTexts;
+  List<ExtractedText> extractedTexts = List.of([]);
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    this.extractedTexts = this.extractedTexts ??
+    this.extractedTexts = (this.extractedTexts.length > 0) ? this.extractedTexts :
         this
             .widget
             .visionText
@@ -122,5 +122,5 @@ class ExtractedText {
   bool selected;
   String text;
 
-  ExtractedText({this.selected, this.text});
+  ExtractedText({required this.selected, required this.text});
 }

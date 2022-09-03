@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppIcon extends StatelessWidget {
   const AppIcon({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

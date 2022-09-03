@@ -1,28 +1,59 @@
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/foundation.dart';
-import 'package:metext/utils/secrets.dart';
+import 'dart:async';
+import 'dart:io';
+
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+final _ADS_THROTTLE = 1;
 
 class AdService {
-  Future<bool> initialize() async {
-    return await FirebaseAdMob.instance
-        .initialize(appId: await Secrets.getAdmobAppId());
+  InterstitialAd? interstitialAd;
+  int counter = 0;
+  bool isAdShown = false;
+
+  Future<InitializationStatus> initialize() async {
+    return await MobileAds.instance.initialize();
   }
 
-  InterstitialAd getInterstitial() {
-    return _loadInterstitialAd();
+  Future<void> show() async {
+    if (counter % _ADS_THROTTLE != 0) {
+      countAd();
+      return;
+    }
+    final completer = Completer<void>();
+    InterstitialAd.load(
+        adUnitId: kReleaseMode
+            ? (Platform.isAndroid
+                ? 'ca-app-pub-7145772846945296/3188657897'
+                : 'ca-app-pub-7145772846945296/3964454999')
+            : 'ca-app-pub-3940256099942544/1033173712',
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) async {
+            shouldDispose();
+            interstitialAd = ad;
+            await ad.show();
+            isAdShown = true;
+            completer.complete();
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error');
+            completer.completeError(error);
+          },
+        ),
+        request: AdRequest());
+    countAd();
+    return completer.future;
   }
 
-  final MobileAdTargetingInfo _targetingInfo = MobileAdTargetingInfo(
-    keywords: ['text', 'book', 'school'],
-    testDevices: [],
-  );
+  void countAd() {
+    if (isAdShown) {
+      isAdShown = false;
+      return;
+    }
+    counter++;
+  }
 
-  _loadInterstitialAd() {
-    return InterstitialAd(
-      adUnitId: kReleaseMode
-          ? 'ca-app-pub-7145772846945296/3188657897'
-          : InterstitialAd.testAdUnitId,
-      targetingInfo: _targetingInfo,
-    );
+  void shouldDispose() async {
+    interstitialAd?.dispose();
   }
 }

@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:metext/i18n/constants.dart';
 import 'package:metext/i18n/l10n.dart';
@@ -20,9 +19,11 @@ import 'package:metext/pages/select_text_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:metext/widgets/gradient_bar.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
-void main() {
-  initializeServiceLocator();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeServiceLocator();
   runApp(MyApp());
 }
 
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Montserrat',
       ),
       darkTheme: ThemeData(
-        primarySwatch: Colors.deepOrange,
+        primarySwatch: Colors.lime,
         accentColor: Colors.lightGreenAccent,
         brightness: Brightness.dark,
         fontFamily: 'Montserrat',
@@ -46,22 +47,22 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: appName),
       localizationsDelegates: [
         AppLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       supportedLocales: [
         const Locale('en', ''),
         const Locale('it', ''),
       ],
       navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
       ],
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -71,9 +72,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
-  InterstitialAd _adIntertitial;
-  BuildContext currentContext;
-  StreamSubscription _intentDataStreamSubscription;
+  BuildContext? currentContext;
+  StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // For sharing images coming from outside the app while the app is in the memory
     _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
         .listen((List<SharedMediaFile> value) {
-      return processExternalImage(value);
+      processExternalImage(value);
     }, onError: (err) {
       print("getIntentDataStream error: $err");
     });
@@ -92,15 +92,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<VisionText> extractText(File image) async {
-    final recognizer = FirebaseVision.instance.textRecognizer();
-    final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(image);
-    return await recognizer.processImage(visionImage);
+  Future<RecognizedText> extractText(File image) async {
+    final recognizer = TextRecognizer();
+    return await recognizer.processImage(InputImage.fromFile(image));
   }
 
-  Future<VisionText> processExternalImage(List<SharedMediaFile> files) async {
-    if (files != null &&
-        files.length > 0 &&
+  Future<RecognizedText?> processExternalImage(List<SharedMediaFile> files) async {
+    if (files.length > 0 &&
         files[0].type == SharedMediaType.IMAGE) {
       await addAdAfterCall(() async {
         setLoading(true);
@@ -115,13 +113,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   processImageFromSource(ImageSource source) async {
     final l10n = AppL10n.of(context);
-    var image;
+    File? image;
     try {
-      image = await ImagePicker.pickImage(source: source);
+      XFile? xfile = await ImagePicker().pickImage(source: source);
+      if (xfile != null) {
+        image = File(xfile.path);
+      }
     } on PlatformException catch (e) {
-      if (e.code == "photo_access_denied" || e.code == "camera_access_denied") {
+      if (currentContext != null && e.code == "photo_access_denied" || e.code == "camera_access_denied") {
         showDialog(
-            context: currentContext,
+            context: currentContext!,
             barrierDismissible: true,
             builder: (context) => AlertDialog(
                   backgroundColor: getBackgroundColor(context),
@@ -130,11 +131,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       ? l10n.permissionPhotoAccessDeniedDescription
                       : l10n.permissionCameraAccessDeniedDescription),
                   actions: <Widget>[
-                    FlatButton(
-                      child: Text(l10n.ok),
+                    TextButton(
                       onPressed: () {
                         Navigator.of(context, rootNavigator: true).pop();
                       },
+                      child: Text(l10n.ok),
                     )
                   ],
                 ));
@@ -146,33 +147,26 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     addAdAfterCall(() async {
-      final visionText = await extractText(image);
-      await goToSelectBlocks(visionText, image);
+      final visionText = await extractText(image!);
+      await goToSelectBlocks(visionText, image!);
       setLoading(false);
     });
   }
 
-  Future goToSelectBlocks(VisionText visionText, File image) async {
-    await Navigator.push(
-        currentContext,
-        MaterialPageRoute(
-            builder: (context) =>
-                SelectTextPage(visionText: visionText, image: image)));
+  Future goToSelectBlocks(RecognizedText visionText, File image) async {
+    if (currentContext != null) {
+      await Navigator.push(
+          currentContext!,
+          MaterialPageRoute(
+              builder: (context) =>
+                  SelectTextPage(visionText: visionText, image: image)));
+    }
   }
 
   addAdAfterCall<T>(Future<T> Function() callback) async {
     final ads = getIt<AdService>();
-    if (_adIntertitial != null) {
-      _adIntertitial.dispose();
-    }
-    _adIntertitial = ads.getInterstitial()..load();
-
+    ads.show();
     await callback();
-
-    _adIntertitial.show(
-      anchorType: AnchorType.bottom,
-      anchorOffset: 0.0,
-    );
   }
 
   void setLoading(bool loading) {
@@ -203,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 padding: const EdgeInsets.only(bottom: 32),
                                 child: AppIcon(),
                               )
-                            : null,
+                            : Container(),
                         ChooseSource(
                           onCameraTap: () async {
                             processImageFromSource(ImageSource.camera);
@@ -221,13 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    if (_adIntertitial != null) {
-      _adIntertitial.dispose();
-    }
-    _adIntertitial = null;
-    if (_intentDataStreamSubscription != null) {
-      _intentDataStreamSubscription.cancel();
-    }
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 }

@@ -5,7 +5,7 @@ class ChooseSource extends StatelessWidget {
   final VoidCallback onCameraTap;
   final VoidCallback onLibraryTap;
 
-  ChooseSource({@required this.onCameraTap, @required this.onLibraryTap});
+  ChooseSource({required this.onCameraTap, required this.onLibraryTap});
 
   @override
   Widget build(BuildContext context) {
@@ -21,18 +21,21 @@ class ChooseSource extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              child: OutlineButton.icon(
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 16, horizontal: 32)),
                 onPressed: this.onCameraTap,
                 icon: Icon(Icons.camera_alt),
                 label: Text(l10n.sourceFromCamera),
-
               ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
-              child: OutlineButton.icon(
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 16, horizontal: 32)),
                 onPressed: this.onLibraryTap,
                 icon: Icon(Icons.photo_library),
                 label: Text(l10n.sourceFromGallery),

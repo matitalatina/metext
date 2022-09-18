@@ -25,7 +25,7 @@ class AdService {
         adUnitId: kReleaseMode
             ? (Platform.isAndroid
                 ? 'ca-app-pub-7145772846945296/3188657897'
-                : 'ca-app-pub-7145772846945296/3964454999')
+                : 'ca-app-pub-7145772846945296/2397345586')
             : 'ca-app-pub-3940256099942544/1033173712',
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) async {

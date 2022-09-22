@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string></string>
+	<string>Metext</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,12 +27,6 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_dartobservatory._tcp</string>
-	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Allow flutter to debug</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -52,8 +46,14 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to the camera if you want to extract text from it.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allow flutter to debug</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library if you want to extract text from it.</string>
 	<key>UILaunchStoryboardName</key>

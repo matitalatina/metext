@@ -67,8 +67,11 @@ class _EditTextPageState extends State<EditTextPage> {
             child: Icon(Icons.share),
             tooltip: l10n.editPageShare,
             onPressed: () {
+              Size size = MediaQuery.of(context).size;
               Share.share(textController.text,
-                  subject: l10n.editPageShareContentSubject);
+                  subject: l10n.editPageShareContentSubject,
+                  sharePositionOrigin: Rect.fromLTWH(0, 0, size.width, size.height / 2.5)
+              );
             }));
   }
 }

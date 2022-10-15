@@ -7,7 +7,7 @@ OCR Scanner app, available for [iOS](https://apps.apple.com/us/app/metext-text-s
 
 - It is made with [Flutter](https://flutter.io/)
 - Android deployment is automated with [fastlane](https://fastlane.tools/)
-- Secret are kept secure with [git-crypt](https://github.com/AGWA/git-crypt)
+- Secrets are kept secure with [git-crypt](https://github.com/AGWA/git-crypt)
 - [Landing page](https://metext.mattianatali.com/)
 
 ## Deployment

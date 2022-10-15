@@ -1,37 +1,16 @@
 # Metext
 
-OCR Scanner
+OCR Scanner app, available for [iOS](https://apps.apple.com/us/app/metext-text-scanner-ocr/id1510120975) and [Android](https://play.google.com/store/apps/details?id=it.mattianatali.metext)
 
+![Metext](assets/marketing/first-page-play-store-en.png)
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+- It is made with [Flutter](https://flutter.io/)
+- Android deployment is automated with [fastlane](https://fastlane.tools/)
+- Secret are kept secure with [git-crypt](https://github.com/AGWA/git-crypt)
+- [Landing page](https://metext.mattianatali.com/)
 
-## How to add secrets
+## Deployment
 
-### Common
-
-If you want to add a secret in common `assets/secrets.yml`:
-
-- Modify `assets/secrets.yml`.
-- `cd assets`
-- `travis encrypt-file secrets.yml`
-
-### Android
-
-If you want to add a secret in resources:
-
-- Add it in `android/resource-secrets.xml`
-- `cd android/secrets`
-- `rm secrets.tar secrets.tar.enc`
-- `tar cvf secrets.tar *`
-- `travis encrypt-file secrets.tar`
-
-If you want to check if it works locally:
-
-- `cp android/secrets/resource-secrets.xml android/app/src/main/res/values/secrets.xml`
-
-### iOS
-
-- TODO: add google service file and xconfig file for CI/CD iOS.
-- TODO: add ios/fastlane/metadata/review_information
+- Android: `make deploy-android`
+- iOS: `make bundle-ios`. Then upload the ipa with [transporter](https://apps.apple.com/it/app/transporter/id1450874784?mt=12)

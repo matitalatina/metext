@@ -4,11 +4,11 @@ import 'dart:io';
 
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-final _ADS_THROTTLE = 1;
+final _ADS_THROTTLE = 2;
 
 class AdService {
   InterstitialAd? interstitialAd;
-  int counter = 0;
+  int counter = 1;
   bool isAdShown = false;
 
   Future<InitializationStatus> initialize() async {

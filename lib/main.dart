@@ -2,16 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:metext/i18n/constants.dart';
 import 'package:metext/i18n/l10n.dart';
 import 'package:metext/i18n/l10n_delegate.dart';
 import 'package:metext/locator.dart';
 import 'package:metext/service/ad_mob.dart';
+import 'package:metext/theme.dart';
 import 'package:metext/widgets/app_icon.dart';
 import 'package:metext/widgets/background_color.dart';
 import 'package:metext/widgets/choose_source.dart';
@@ -34,16 +33,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: appName,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-        fontFamily: 'Montserrat',
-      ),
-      darkTheme: ThemeData(
-        primarySwatch: Colors.lime,
-        accentColor: Colors.lightGreenAccent,
-        brightness: Brightness.dark,
-        fontFamily: 'Montserrat',
-      ),
+      theme: getLightTheme(),
+      darkTheme: getDarkTheme(),
       home: MyHomePage(title: appName),
       localizationsDelegates: [
         AppLocalizationsDelegate(),
@@ -79,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // For sharing images coming from outside the app while the app is in the memory
-    _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream()
         .listen((List<SharedMediaFile> value) {
       processExternalImage(value);
     }, onError: (err) {
@@ -87,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // For sharing images coming from outside the app while the app is closed
-    ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
+    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
       return processExternalImage(value);
     });
   }
@@ -99,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<RecognizedText?> processExternalImage(List<SharedMediaFile> files) async {
     if (files.length > 0 &&
-        files[0].type == SharedMediaType.IMAGE) {
+        files[0].type == SharedMediaType.image) {
       await addAdAfterCall(() async {
         setLoading(true);
         final image = File(files[0].path);
@@ -148,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     addAdAfterCall(() async {
       final visionText = await extractText(image!);
-      await goToSelectBlocks(visionText, image!);
+      await goToSelectBlocks(visionText, image);
       setLoading(false);
     });
   }
@@ -206,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             processImageFromSource(ImageSource.gallery);
                           },
                         ),
-                      ].where((w) => w != null).toList(),
+                      ].toList(),
                     ),
                   ),
                 ),

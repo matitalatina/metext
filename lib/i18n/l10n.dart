@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/widgets.dart';
 import 'package:metext/i18n/en.dart';
 import 'package:metext/i18n/it.dart';

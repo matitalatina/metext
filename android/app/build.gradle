@@ -65,6 +65,11 @@ android {
         release {
             manifestPlaceholders = [analytics_deactivated: "false"]
             signingConfig signingConfigs.release
+            
+            // Enable R8 with ProGuard rules
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     lint {

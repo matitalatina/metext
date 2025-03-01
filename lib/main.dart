@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<RecognizedText> extractText(File image) async {
-    final recognizer = TextRecognizer();
+    final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
     try {
       return await recognizer.processImage(InputImage.fromFile(image));
     } finally {

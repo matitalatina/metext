@@ -70,7 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // For sharing images coming from outside the app while the app is in the memory
-    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream()
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance
+        .getMediaStream()
         .listen((List<SharedMediaFile> value) {
       processExternalImage(value);
     }, onError: (err) {
@@ -78,19 +79,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // For sharing images coming from outside the app while the app is closed
-    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+    ReceiveSharingIntent.instance
+        .getInitialMedia()
+        .then((List<SharedMediaFile> value) {
       return processExternalImage(value);
     });
   }
 
   Future<RecognizedText> extractText(File image) async {
     final recognizer = TextRecognizer();
-    return await recognizer.processImage(InputImage.fromFile(image));
+    try {
+      return await recognizer.processImage(InputImage.fromFile(image));
+    } finally {
+      recognizer.close();
+    }
   }
 
-  Future<RecognizedText?> processExternalImage(List<SharedMediaFile> files) async {
-    if (files.length > 0 &&
-        files[0].type == SharedMediaType.image) {
+  Future<RecognizedText?> processExternalImage(
+      List<SharedMediaFile> files) async {
+    if (files.length > 0 && files[0].type == SharedMediaType.image) {
       await addAdAfterCall(() async {
         setLoading(true);
         final image = File(files[0].path);
@@ -111,7 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
         image = File(xfile.path);
       }
     } on PlatformException catch (e) {
-      if (currentContext != null && e.code == "photo_access_denied" || e.code == "camera_access_denied") {
+      if (currentContext != null && e.code == "photo_access_denied" ||
+          e.code == "camera_access_denied") {
         showDialog(
             context: currentContext!,
             barrierDismissible: true,

@@ -14,7 +14,7 @@ description: OCR Scanner
 version: 1.0.7+8
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -23,13 +23,13 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  get_it: ^7.2.0
-  provider: ^6.0.3
+  get_it: ^7.6.7
+  provider: ^6.1.2
   image_picker: ^1.1.2
-  google_mlkit_text_recognition: ^0.13.0
-  share_plus: ^10.0.2
-  google_mobile_ads: ^5.1.0
-  yaml: ^3.1.1
+  google_mlkit_text_recognition: ^0.14.0
+  share_plus: ^10.1.4
+  google_mobile_ads: ^5.3.1
+  yaml: ^3.1.3
   receive_sharing_intent:
     git:
       url: https://github.com/KasemJaffer/receive_sharing_intent

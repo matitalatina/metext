@@ -154,7 +154,7 @@ PODS:
     - Flutter
     - FlutterMacOS
   - PromisesObjC (2.4.0)
-  - receive_sharing_intent (1.8.0):
+  - receive_sharing_intent (1.8.1):
     - Flutter
   - share_plus (0.0.1):
     - Flutter
@@ -253,7 +253,7 @@ SPEC CHECKSUMS:
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  receive_sharing_intent: df9c334dc9feadcbd3266e5cb49c8443405e1c9f
+  receive_sharing_intent: 79c848f5b045674ad60b9fea3bafea59962ad2c1
   share_plus: 8875f4f2500512ea181eef553c3e27dba5135aad
   webview_flutter_wkwebview: 0982481e3d9c78fd5c6f62a002fcd24fc791f1e4
 

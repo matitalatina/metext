@@ -24,8 +24,6 @@ plugins {
 }
 
 include ":app"
-include ":receive_sharing_intent"
-project(":receive_sharing_intent").projectDir = new File(rootProject.projectDir, "receive_sharing_intent")
 
 def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
 
@@ -37,8 +35,6 @@ if (pluginsFile.exists()) {
 
 plugins.each { name, path ->
     def pluginDirectory = flutterProjectRoot.resolve(path).resolve('android').toFile()
-    if (name != "receive_sharing_intent") {
-        include ":$name"
-        project(":$name").projectDir = pluginDirectory
-    }
+    include ":$name"
+    project(":$name").projectDir = pluginDirectory
 }

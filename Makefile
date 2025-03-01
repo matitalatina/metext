@@ -4,3 +4,4 @@ deploy-android:
 
 bundle-ios:
 	flutter build ipa
+	open build/ios/ipa/;

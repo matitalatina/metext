@@ -6,4 +6,6 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 # gem "rails"
 
-gem "fastlane", "~> 2.141"
+gem "fastlane"
+gem "abbrev"
+gem "ostruct"

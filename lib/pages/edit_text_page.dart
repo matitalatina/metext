@@ -34,7 +34,10 @@ class _EditTextPageState extends State<EditTextPage> {
     final l10n = AppL10n.of(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(l10n.editPageTitle, key: Key('editPage-title'),),
+          title: Text(
+            l10n.editPageTitle,
+            key: Key('editPage-title'),
+          ),
           flexibleSpace: GradientBar(),
           actions: [
             Builder(
@@ -66,11 +69,16 @@ class _EditTextPageState extends State<EditTextPage> {
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.share),
             tooltip: l10n.editPageShare,
-            onPressed: () {
-              Size size = MediaQuery.of(context).size;
-              Share.share(textController.text,
+            onPressed: () async {
+              final box = context.findRenderObject() as RenderBox?;
+              await SharePlus.instance.share(
+                ShareParams(
+                  text: textController.text,
                   subject: l10n.editPageShareContentSubject,
-                  sharePositionOrigin: Rect.fromLTWH(0, 0, size.width, size.height / 2.5)
+                  sharePositionOrigin: box != null
+                      ? box.localToGlobal(Offset.zero) & box.size
+                      : null,
+                ),
               );
             }));
   }

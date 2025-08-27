@@ -1,1 +1,0 @@
-Now you can send images to Metext using Android sharing!
